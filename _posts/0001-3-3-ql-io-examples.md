@@ -1,0 +1,16 @@
+---
+layout: default
+published: true
+classes:
+ - slide
+data:
+  x: 2000
+  y: 1600
+
+title: "ql.io Examples"
+---
+* [show tables](http://ql.io/console?s=show%20tables#)
+* [describe google.geocode](http://ql.io/console?s=describe%20google.geocode#)
+* [fetch from google.geocode where the address is Calgary](http://ql.io/console?s=select%20*%20from%20google.geocode%20where%20address%20%3D%20%22Calgary%22#)
+* [fetch the github profile and slideshare presos for a user](http://ql.io/console?s=create%20table%20slideshare%20on%20select%20get%20from%20'http%3A%2F%2Fwww.slideshare.net%2Frss%2Fuser%2F%7Buser%7D'%3B%0Acreate%20table%20github%20on%20select%20get%20from%20'https%3A%2F%2Fapi.github.com%2Fusers%2F%7Buser%7D'%3B%0A%0Auser%20%3D%20'kinghuang'%3B%0Aslides%20%3D%20select%20*%20from%20slideshare%20where%20user%3D'%7Buser%7D'%3B%0Aprofile%20%3D%20select%20*%20from%20github%20where%20user%3D'%7Busers%7D'%3B%0A%0Areturn%20%7B%0A%09'slides'%3A%20'%7Bslides%7D'%2C%0A%20%20%20%20'profile'%3A%20'%7Bprofile%7D'%0A%7D#)
+* [find eBay items with keywords “mini cooper”, get the details of each item, and then get the latitude and longitude of each item's location](http://ql.io/console?s=create%20table%20finditems%0A%09on%20select%20get%20from%20'http%3A%2F%2Fsvcs.ebay.com%2Fservices%2Fsearch%2FFindingService%2Fv1%3FOPERATION-NAME%3DfindItemsByKeywords%26SERVICE-VERSION%3D1.8.0%26GLOBAL-ID%3D%7Bglobalid%7D%26SECURITY-APPNAME%3D%7Bapikey%7D%26RESPONSE-DATA-FORMAT%3D%7Bformat%7D%26REST-PAYLOAD%26keywords%3D%7B%5Ekeywords%7D%26paginationInput.entriesPerPage%3D%7Blimit%7D%26paginationInput.pageNumber%3D%7BpageNumber%7D%26outputSelector%25280%2529%3DSellerInfo%26sortOrder%3D%7BsortOrder%7D'%0A%09%09with%20aliases%20format%20%3D%20'RESPONSE-DATA-FORMAT'%2C%20json%20%3D%20'JSON'%2C%20xml%20%3D%20'XML'%0A%09%09using%20defaults%20format%20%3D%20'XML'%2C%20globalid%20%3D%20'EBAY-US'%2C%20sortorder%20%3D'BestMatch'%2C%0A%09%09apikey%20%3D%20%20%22%7Bconfig.eBay.apikey%7D%22%2C%20limit%20%3D%2010%2C%20pageNumber%20%3D%201%0A%09%09resultset%20'findItemsByKeywordsResponse.searchResult.item'%3B%0A%20%0Acreate%20table%20details%0A%09on%20select%20get%20from%20%22htttp%3A%2F%2Fopen.api.ebay.com%2Fshopping%3Fcallname%3DGetMultipleItems%26ItemID%3D%7BitemId%7D%26responseencoding%3D%7Bformat%7D%26appid%3D%7B%5Eapikey%7D%26version%3D713%26IncludeSelector%3DShippingCosts%22%0A%09%09using%20defaults%20format%20%3D%20%22JSON%22%2C%20apikey%20%3D%20%22%7Bconfig.eBay.apikey%7D%22%0A%09%09resultset%20'Item'%3B%0A%20%0Acreate%20table%20google.geocode%0A%09on%20select%20get%20from%20%22http%3A%2F%2Fmaps.googleapis.com%2Fmaps%2Fapi%2Fgeocode%2F%7Bformat%7D%3Fsensor%3Dtrue%26address%3D%7B%5Eaddress%7D%22%0A%09%09using%20defaults%20format%20%3D%20'json'%0A%09%09resultset%20'results'%3B%0A%20%20%20%20%0Aselect%20e.ItemID%20as%20id%2C%20e.Title%20as%20title%2C%20e.ViewItemURLForNaturalSearch%20as%20url%2C%20g.geometry.location%20as%20latlng%0A%09from%20details%20%20as%20e%2C%20google.geocode%20as%20g%0A%09where%20e.itemId%20in%20(select%20itemId%20from%20finditems%20where%20keywords%20%3D%20'mini%20cooper')%0A%09and%20g.address%20%3D%20e.Location#)
