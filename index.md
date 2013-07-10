@@ -1,13 +1,22 @@
 ---
-layout: default
+layout: presentation
 title: Hekyll Presentation Generator
 ---
 
-# Hekyll #
-_pronunciation: "heckle"_
-
-Hekyll is a presentation generator that uses Jekyll and Impress.js to create awesome presentations. You write Markdown files, which get turned into individual slides for an Impress.js presentation. How cool is that?
-
-[Check it out in action!](preso.html)
-
-[Fork me on GitHub](https://github.com/bmcmurray/hekyll)
+{% for post in site.posts reversed %}
+	{% if post.master == 'start' %}
+		{% include start.html %}
+	{% elsif post.master == 'section' %}
+		{% include section.html %}
+	{% elsif post.master == 'definition' %}
+		{% include definition.html %}
+	{% else %}
+		{% include slide.html %}
+	{% endif %}
+  <div class="page-break"></div>
+{% endfor %}
+{% unless site.simple-slideshow %}
+{% if site.overview %}
+<div id="overview" class="step" {% for attr in site.overview-data %} data-{{attr[0]}}="{{attr[1]}}"{% endfor %}></div>
+{% endif %}
+{% endunless %}
