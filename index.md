@@ -1,19 +1,10 @@
 ---
 layout: presentation
-title: Hekyll Presentation Generator
+title: "AD Bootcamp Session 103: Mashups"
 ---
 
 {% for post in site.posts reversed %}
-	{% if post.master == 'start' %}
-		{% include start.html %}
-	{% elsif post.master == 'section' %}
-		{% include section.html %}
-	{% elsif post.master == 'definition' %}
-		{% include definition.html %}
-	{% else %}
-		{% include slide.html %}
-	{% endif %}
-  <div class="page-break"></div>
+  {% include slide.html %}
 {% endfor %}
 {% unless site.simple-slideshow %}
 {% if site.overview %}
